@@ -9,7 +9,17 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": ["mtg", "magic-the-gathering", "deck-builder"],
+  "keywords": [
+    "mtg",
+    "magic-the-gathering",
+    "deck-builder"
+  ],
   "author": "Johan Persson",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "mtg-deck-toolkit": "^1.0.0"
+  },
+  "devDependencies": {
+    "vite": "^6.4.0"
+  }
 }
