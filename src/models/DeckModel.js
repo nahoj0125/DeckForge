@@ -14,7 +14,7 @@ export class deckModel {
 
   addCard(cardData, quantity = 1) {
     if (quantity < 1 || !Number.isInteger(quantity)) {
-      throw new CardValidationException('quantity', 'Wauntity must be a positive integer')
+      throw new CardValidationException('quantity', 'Qauntity must be a positive integer')
     }
 
     for (let i = 0; i < quantity; i++) {
@@ -29,7 +29,7 @@ export class deckModel {
     }
   }
 
-  getCards(deck) {
+  getCards() {
     return this.deckAdapter.getCards()
   }
 
