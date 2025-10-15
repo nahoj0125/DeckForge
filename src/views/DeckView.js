@@ -2,7 +2,6 @@ export class deckView {
   constructor() {
     this.deckListElement = document.getElementById('deck-list')
     this.cardCountElement = document.getElementById('card-count')
-    this.cardForm
   }
 
   renderDeckList(cards) {
