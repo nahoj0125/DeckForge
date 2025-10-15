@@ -4,11 +4,153 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DeckForge - MTG Deck Builder</title>
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <h1>DeckForge</h1>
-  <p>Setup successful!</p>
-  
+  <!-- Main App Container -->
+  <div id="app">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <h1>DeckForge</h1>
+      <p class="subtitle">Magic: The Gathering Deck Builder</p>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      
+      <!-- Left Panel: Add Card Form -->
+      <section class="card-form-section">
+        <h2>Add Card</h2>
+        
+        <form id="add-card-form">
+          <!-- Card Name -->
+          <div class="form-group">
+            <label for="card-name">Card Name *</label>
+            <input 
+              type="text" 
+              id="card-name" 
+              name="name" 
+              placeholder="e.g., Lightning Bolt"
+              required
+            >
+            <span class="error" id="error-name"></span>
+          </div>
+
+          <!-- Mana Cost -->
+          <div class="form-group">
+            <label for="card-mana">Mana Cost *</label>
+            <input 
+              type="text" 
+              id="card-mana" 
+              name="manaCost" 
+              placeholder="e.g., R, 2G, 1UU"
+              required
+            >
+            <span class="error" id="error-manaCost"></span>
+            <small class="hint">Use W, U, B, R, G for colors</small>
+          </div>
+
+          <!-- Card Type -->
+          <div class="form-group">
+            <label for="card-type">Type *</label>
+            <select id="card-type" name="type" required>
+              <option value="">Select type...</option>
+              <option value="creature">Creature</option>
+              <option value="instant">Instant</option>
+              <option value="sorcery">Sorcery</option>
+              <option value="enchantment">Enchantment</option>
+              <option value="artifact">Artifact</option>
+              <option value="planeswalker">Planeswalker</option>
+              <option value="land">Land</option>
+            </select>
+            <span class="error" id="error-type"></span>
+          </div>
+
+          <!-- Color -->
+          <div class="form-group">
+            <label>Color *</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="color" value="white">
+                <span>White</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="color" value="blue">
+                <span>Blue</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="color" value="black">
+                <span>Black</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="color" value="red">
+                <span>Red</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="color" value="green">
+                <span>Green</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="color" value="colorless">
+                <span>Colorless</span>
+              </label>
+            </div>
+            <span class="error" id="error-color"></span>
+            <small class="hint">Select all that apply (can choose multiple)</small>
+          </div>
+
+          <!-- Power/Toughness (for creatures) -->
+          <div class="form-group" id="power-toughness-group">
+            <label for="card-power">Power/Toughness</label>
+            <input 
+              type="text" 
+              id="card-power" 
+              name="powerToughness" 
+              placeholder="e.g., 2/2"
+            >
+            <span class="error" id="error-powerToughness"></span>
+            <small class="hint">Only for creatures (e.g., 2/2, 3/1, */4)</small>
+          </div>
+
+          <!-- Buttons -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Card</button>
+            <button type="button" class="btn btn-secondary" id="clear-form-btn">Clear Form</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Panel: Deck List -->
+      <section class="deck-section">
+        <div class="deck-header">
+          <h2>Deck List</h2>
+          <div class="deck-stats">
+            <span id="card-count" class="stat">0 cards</span>
+            <span class="stat-separator">•</span>
+            <span id="deck-limit" class="stat">60 max</span>
+          </div>
+        </div>
+
+        <!-- Deck Actions -->
+        <div class="deck-actions">
+          <button class="btn btn-danger" id="clear-deck-btn">Clear Deck</button>
+        </div>
+
+        <!-- Card List -->
+        <div id="deck-list" class="deck-list">
+          <p class="empty-state">No cards in deck. Add some cards to get started!</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+    </footer>
+
+  </div>
+
   <script type="module" src="/src/app.js"></script>
 </body>
 </html>
