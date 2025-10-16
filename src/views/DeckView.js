@@ -42,7 +42,7 @@ export class DeckView {
 
   renderDeckList(cards) {
     if (!cards || cards === 0) {
-      this.deckListElement('<p class="empty-message">No cards in deck</p>')
+      this.deckListElement.innerHTML = '<p class="empty-message">No cards in deck</p>'
       return
     }
 
@@ -53,15 +53,17 @@ export class DeckView {
         return this.#createCardElement(name, data)
       })
       .join('')
+
+    this.cardCountElement.textContent = cardElements
   }
 
   updateCardCount(count) {
-    this.cardCountElement.textContent = count
+    this.cardCountElement.textContent = `${count} cards`
   }
 
   #groupCards(cards) {
-    return cards.reduce((group, cards) => {
-      const name = cards.name
+    return cards.reduce((groups, card) => {
+      const name = card.name
       if (!groups[name]) {
         groups[name] = {
           quantity: 0,
