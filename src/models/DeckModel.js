@@ -8,6 +8,9 @@ import { ClearDeckResult } from './dto/ClearDeckResult.js'
 import { DeckStateDTO } from './dto/DeckStateDTO.js'
 
 export class DeckModel {
+  #MAX_DECK_SIZE = 60
+  #MIN_DECKSIZE = 0
+
   constructor(deckAdapter) {
     if (!deckAdapter) {
       throw new Error('DeckAdapter is required')
@@ -20,7 +23,7 @@ export class DeckModel {
     if (quantity < 1 || !Number.isInteger(quantity)) {
       throw new CardValidationException(
         'quantity',
-        'Qauntity must be a positive integer'
+        'Quantity must be a positive integer'
       )
     }
 
@@ -62,7 +65,7 @@ export class DeckModel {
 
     return new RemoveCardResult(
       true,
-      cardData,
+      cardName,
       quantity,
       this.deckAdapter.getCardCount()
     )
@@ -78,9 +81,17 @@ export class DeckModel {
     const cardCount = this.deckAdapter.getCardCount()
     return new DeckStateDTO({
       totalCards: cardCount,
-      isEmpty: cardCount === 0,
-      isFull: cardCount >= 60,
-      remainingSlots: 60 - cardCount,
+      isEmpty: this.isDeckEmpty(),
+      isFull: this.isDeckFull(),
+      remainingSlots: this.#MAX_DECK_SIZE - cardCount,
     })
+  }
+
+  isDeckFull() {
+    return this.getCardCount() >= this.#MAX_DECK_SIZE
+  }
+
+  isDeckEmpty() {
+    return this.getCardCount() === this.#MIN_DECKSIZE
   }
 }
