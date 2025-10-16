@@ -2,9 +2,11 @@ import {
   CardValidationException,
   DeckConstraintException,
 } from '../dal/exceptions/DataExceptions.js'
+import { AddCardResult } from './dto/AddCardResult.js'
+import { RemoveCardResult } from './dto/RemoveCardResult.js'
 
-export class deckModel {
-  constructor() {
+export class DeckModel {
+  constructor(deckAdapter) {
     if (!deckAdapter) {
       throw new Error('DeckAdapter is required')
     }
@@ -18,15 +20,15 @@ export class deckModel {
     }
 
     for (let i = 0; i < quantity; i++) {
-      this.deckAdapter.cardData(cardData)
+      this.deckAdapter.addCard(cardData)
     }
 
-    return {
-      sucess: true,
-      cardName: cardData.name,
+    return new AddCardResult(
+      true,
+      cardData.name,
       quantity,
-      totalCards: this.deckAdapter.getCardCount()
-    }
+      this.deckAdapter.getCardCount()
+    )
   }
 
   getCards() {
@@ -35,5 +37,26 @@ export class deckModel {
 
   getCardCount() {
     return this.deckAdapter.getCardCount()
+  }
+
+  removeCard(cardName, quantity = 1) {
+    if (!cardName || cardName.trim() === '') {
+      throw new CardValidationException('cardName', 'Card name cannot be empty')
+    }
+
+    if (quantity < 1 || !Number.isInteger(quantity)) {
+      throw new CardValidationException('quantity', 'Quantity must be a positive integer')
+    }
+
+    for (let i = 0; i < quantity; i++) {
+      this.deckAdapter.removeCard(cardName)
+    }
+
+    return new RemoveCardResult(
+      true,
+      cardData,
+      quantity,
+      this.deckAdapter.getCardCount()
+    )
   }
 }
