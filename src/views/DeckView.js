@@ -1,30 +1,33 @@
-export class deckView {
+import { CardFormDataDTO } from "../models/dto/CardFormDataDTO.js"
+
+export class DeckView {
   constructor() {
     this.deckListElement = document.getElementById('deck-list')
     this.cardCountElement = document.getElementById('card-count')
-    this.cardForm = document.getElementById('card-form')
+    this.cardForm = document.getElementById('add-card-form')
     this.cardNameInput = document.getElementById('card-name')
-    this.manaCostInput = document.getElementById('mana-cost')
-    this.cardTypeSelect = docment.getElementById('card-type')
+    this.manaCostInput = document.getElementById('card-mana')
+    this.cardTypeSelect = document.getElementById('card-type')
     this.colorCheckboxes = document.querySelectorAll('input[name="color"]')
-    this.powerToughnessInput = document.getElementById('power-toughness')
-    this.qantityInput = document.getElementById('quantity')
+    this.powerToughnessInput = document.getElementById('card-power')
+    this.quantityInput = document.getElementById('card-quantity')
   }
 
   getCardFormData() {
     const selectedColors = Array.from(this.colorCheckboxes)
       .filter((checkbox) => checkbox.checked)
       .map((colorCheckbox) => colorCheckbox.value)
-    return {
-      cardData: {
+
+    return new CardFormDataDTO({
+      cardDara: {
         name: this.cardNameInput.value.trim(),
-        manaCost: this.manaCostInput.value.trim(),
+        manaCost: this.manaCostInput.vlaue.trim(),
         type: this.cardTypeSelect.value,
         color: selectedColors.join(''),
-        powerToughness: this.powerToughnessInput.value.trim(),
+        powerToughness: this.powerToughnessInput.value.trim()
       },
-      quantity: parseInt(this.qantityInput.value || 1),
-    }
+      quantity: parseInt(this.quantityInput.value) || 1
+    })
   }
 
   clearCardForm() {
