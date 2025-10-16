@@ -1,4 +1,4 @@
-class AddCardResult {
+export class AddCardResult {
   constructor (sucess, cardName, quantity, totalCards) {
     this.sucess = sucess
     this.cardName = cardName

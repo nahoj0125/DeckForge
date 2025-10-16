@@ -13,7 +13,7 @@ import {
  * 
  * 
  */
-export class MTGToolKitAdapter {
+export class MtgToolKitAdapter {
   #deck
   
   constructor(deckName = 'Untitled Deck') {

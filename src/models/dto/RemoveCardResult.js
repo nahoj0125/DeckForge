@@ -1,4 +1,4 @@
-class RemoveCardResult {
+export class RemoveCardResult {
   constructor (sucess, cardName, quantity, totalCards) {
     this.sucess = sucess
     this.cardName = cardName
