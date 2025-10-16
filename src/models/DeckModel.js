@@ -4,6 +4,8 @@ import {
 } from '../dal/exceptions/DataExceptions.js'
 import { AddCardResult } from './dto/AddCardResult.js'
 import { RemoveCardResult } from './dto/RemoveCardResult.js'
+import { ClearDeckResult } from './dto/ClearDeckResult.js'
+import { DeckStateDTO } from './dto/DeckStateDTO.js'
 
 export class DeckModel {
   constructor(deckAdapter) {
@@ -16,7 +18,10 @@ export class DeckModel {
 
   addCard(cardData, quantity = 1) {
     if (quantity < 1 || !Number.isInteger(quantity)) {
-      throw new CardValidationException('quantity', 'Qauntity must be a positive integer')
+      throw new CardValidationException(
+        'quantity',
+        'Qauntity must be a positive integer'
+      )
     }
 
     for (let i = 0; i < quantity; i++) {
@@ -45,7 +50,10 @@ export class DeckModel {
     }
 
     if (quantity < 1 || !Number.isInteger(quantity)) {
-      throw new CardValidationException('quantity', 'Quantity must be a positive integer')
+      throw new CardValidationException(
+        'quantity',
+        'Quantity must be a positive integer'
+      )
     }
 
     for (let i = 0; i < quantity; i++) {
@@ -58,5 +66,21 @@ export class DeckModel {
       quantity,
       this.deckAdapter.getCardCount()
     )
+  }
+
+  clearDeck() {
+    this.deckAdapter.clearDeck()
+
+    return new ClearDeckResult(true, this.deckAdapter.getCardCount())
+  }
+
+  getDeckState() {
+    const cardCount = this.deckAdapter.getCardCount()
+    return new DeckStateDTO({
+      totalCards: cardCount,
+      isEmpty: cardCount === 0,
+      isFull: cardCount >= 60,
+      remainingSlots: 60 - cardCount,
+    })
   }
 }
