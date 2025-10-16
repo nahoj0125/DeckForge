@@ -18,16 +18,17 @@ export class DeckView {
       .filter((checkbox) => checkbox.checked)
       .map((colorCheckbox) => colorCheckbox.value)
 
-    return new CardFormDataDTO({
-      cardDara: {
-        name: this.cardNameInput.value.trim(),
-        manaCost: this.manaCostInput.vlaue.trim(),
-        type: this.cardTypeSelect.value,
-        color: selectedColors.join(''),
-        powerToughness: this.powerToughnessInput.value.trim()
-      },
-      quantity: parseInt(this.quantityInput.value) || 1
-    })
+    const cardData = {
+      name: this.cardNameInput.value.trim(),
+      manaCost: this.manaCostInput.value.trim(),
+      type: this.cardTypeSelect.value,
+      color: selectedColors.join(''),
+      powerToughness: this.powerToughnessInput.value.trim()
+    }
+
+    const quantity = parseInt(this.quantityInput.value) || 1
+
+    return new CardFormDataDTO(cardData, quantity)
   }
 
   clearCardForm() {
@@ -72,7 +73,7 @@ export class DeckView {
       }
       groups[name].quantity++
       return groups
-    })
+    },{})
   }
 
   #createCardElement(name, data) {
@@ -89,6 +90,28 @@ export class DeckView {
       <button class="remove-card-btn" data-card-name=">{name}Remove</button>
     </div>
     `
+  }
+
+  showSucess(message) {
+    const sucessDiv = document.createElement('div')
+    sucessDiv.className = 'sucess-message'
+    sucessDiv.textContent = message
+
+    const container = this.cardForm.parentElement
+    container.insertBefore(sucessDiv, this.cardForm)
+
+    setTimeout(() => sucessDiv.remove(), 3000)
+  }
+
+  showError(message) {
+    const errorDiv = document.createElement('div')
+    errorDiv.className = 'error-message'
+    errorDiv.textContent = message
+
+    container = this.cardForm.parentElement
+    container.insertBefore(errorDiv, this.cardForm)
+
+    setTimeout(() => errorDiv.remove(), 5000)
   }
 
   bindAddCard(handler) {

@@ -7,5 +7,32 @@ export class DeckController {
     const adapter = new MtgToolKitAdapter('Untitled Deck')
     this.model = new DeckModel(adapter)
     this.view = new DeckView()
+    this.bindEvents()
+    this.updateUI()
+  }
+
+  handleAddCard(cardData, quantity) {
+    try {
+      const result = this.model.addCard(cardData, quantity)
+      this.view.showSucess(`Added ${result.quantity}x ${result.cardName}`)
+      this.updateUI()
+    } catch (error) {
+      console.error(error)
+      
+    }
+  }
+
+  updateUI() {
+    const cards = this.model.getCards()
+    const state = this.model.getDeckState()
+
+    this.view.renderDeckList(cards)
+    this.view.updateCardCount(state.totalCards)
+  }
+
+  bindEvents() {
+    this.view.bindAddCard((cardData, quantity) => {
+      this.handleAddCard(cardData, quantity)
+    })
   }
 }
