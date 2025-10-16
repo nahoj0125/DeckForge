@@ -42,7 +42,7 @@ export class DeckView {
   }
 
   renderDeckList(cards) {
-    if (!cards || cards === 0) {
+    if (!cards || cards.length === 0) {
       this.deckListElement.innerHTML = '<p class="empty-message">No cards in deck</p>'
       return
     }
@@ -55,7 +55,7 @@ export class DeckView {
       })
       .join('')
 
-    this.cardCountElement.textContent = cardElements
+    this.deckListElement.innerHTML = cardElements
   }
 
   updateCardCount(count) {
@@ -87,7 +87,7 @@ export class DeckView {
         <span class="card-mana">${card.manaCost}</span>
         <span class="card-type">${card.type}</span>
       </div>
-      <button class="remove-card-btn" data-card-name=">{name}Remove</button>
+      <button class="remove-card-btn" data-card-name="${name}">Remove</button>
     </div>
     `
   }

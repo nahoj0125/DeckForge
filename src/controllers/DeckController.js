@@ -17,8 +17,7 @@ export class DeckController {
       this.view.showSucess(`Added ${result.quantity}x ${result.cardName}`)
       this.updateUI()
     } catch (error) {
-      console.error(error)
-      
+      this.view.showError()
     }
   }
 
