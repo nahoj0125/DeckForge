@@ -99,17 +99,16 @@ export class DeckView {
     const container = this.cardForm.parentElement
     container.insertBefore(successDiv.toDOMElement(), this.cardForm)
 
+    setTimeout(() => successDiv.remove(), 3000)
   }
 
   showError(message) {
-    const errorDiv = document.createElement('div')
-    errorDiv.className = 'error-message'
-    errorDiv.textContent = message
+    const errorDiv = new Div().appendChild(message)
 
-    container = this.cardForm.parentElement
-    container.insertBefore(errorDiv, this.cardForm)
+    const container = this.cardForm.parentElement
+    container.insertBefore(errorDiv.toDOMElement(), this.cardForm)
 
-    setTimeout(() => errorDiv.remove(), 5000)
+    setTimeout(() => errorDiv.remove(), 3000)
   }
 
   bindAddCard(handler) {

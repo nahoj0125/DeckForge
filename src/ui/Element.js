@@ -2,6 +2,7 @@ export class Element {
   constructor (tag) {
     this.tag = tag
     this.children = []
+    this.domElement = null
   }
  
   appendChild(child) {
@@ -12,6 +13,13 @@ export class Element {
     return this
   }
 
+  remove() {
+    if (this.domElement && this.domElement.parentNode) {
+      this.domElement.parentNode.removeChild(this.domElement)
+      this.domElement = null
+    }
+  }
+
   toDOMElement() {
     const element = document.createElement(this.tag)
 
@@ -20,6 +28,7 @@ export class Element {
         element.appendChild(document.createTextNode(child.text))
       }
     })
+    this.domElement = element
     return element
   }
 }
