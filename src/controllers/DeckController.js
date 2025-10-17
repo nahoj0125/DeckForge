@@ -14,7 +14,7 @@ export class DeckController {
   handleAddCard(cardData, quantity) {
     try {
       const result = this.model.addCard(cardData, quantity)
-      this.view.showSucess(`Added ${result.quantity}x ${result.cardName}`)
+      this.view.showSuccess(`Added ${result.quantity}x ${result.cardName}`)
       this.updateUI()
     } catch (error) {
       this.view.showError()

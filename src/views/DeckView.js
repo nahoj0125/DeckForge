@@ -93,13 +93,13 @@ export class DeckView {
     `
   }
 
-  showSucess(message) {
-    const successDiv = new Div().appendChild(message)
+  showSuccess(message) {
+    const successDiv = new Div().addClass('success-message').appendChild(message)
 
     const container = this.cardForm.parentElement
     container.insertBefore(successDiv.toDOMElement(), this.cardForm)
 
-    setTimeout(() => successDiv.remove(), 3000)
+    setTimeout(() => successDiv.remove(), 30000)
   }
 
   showError(message) {

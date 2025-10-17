@@ -2,7 +2,13 @@ export class Element {
   constructor (tag) {
     this.tag = tag
     this.children = []
+    this.classes = new Set()
     this.domElement = null
+  }
+
+  addClass(className) {
+    this.classes.add(className)
+    return this
   }
  
   appendChild(child) {
@@ -22,6 +28,10 @@ export class Element {
 
   toDOMElement() {
     const element = document.createElement(this.tag)
+
+    if (this.classes.size > 0) {
+      element.className = Array.from(this.classes).join('')
+    }
 
     this.children.forEach(child => {
       if (child.text) {
