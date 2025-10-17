@@ -1,4 +1,5 @@
 import { CardFormDataDTO } from "../models/dto/CardFormDataDTO.js"
+import { Div, Element } from "../ui/index.js"
 
 export class DeckView {
   constructor() {
@@ -93,14 +94,11 @@ export class DeckView {
   }
 
   showSucess(message) {
-    const sucessDiv = document.createElement('div')
-    sucessDiv.className = 'sucess-message'
-    sucessDiv.textContent = message
+    const successDiv = new Div().appendChild(message)
 
     const container = this.cardForm.parentElement
-    container.insertBefore(sucessDiv, this.cardForm)
+    container.insertBefore(successDiv.toDOMElement(), this.cardForm)
 
-    setTimeout(() => sucessDiv.remove(), 3000)
   }
 
   showError(message) {
