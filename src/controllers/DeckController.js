@@ -21,14 +21,23 @@ export class DeckController {
     }
   }
 
-    handleRemoveCard(cardName) {
+  handleRemoveCard(cardName) {
     try {
       this.model.removeCard(cardName)
       this.view.showSuccess(`Removed ${cardName}`)
       this.updateUI()
     } catch (error) {
-      console.error('Error removing card:', error)
       this.view.showError('Failed to remove card')
+    }
+  }
+
+  handleClearDeck() {
+    try {
+      this.model.clearDeck()
+      this.view.showSuccess('Deck cleared')
+      this.updateUI()
+    } catch (error) {
+      this.view.showError('Failed to clear deck')
     }
   }
 
@@ -44,8 +53,11 @@ export class DeckController {
     this.view.bindAddCard((cardData, quantity) => {
       this.handleAddCard(cardData, quantity)
     })
-        this.view.bindRemoveCard((cardName) => {
+    this.view.bindRemoveCard((cardName) => {
       this.handleRemoveCard(cardName)
+    })
+    this.view.bindClearDeck(() => {
+      this.handleClearDeck()
     })
   }
 }

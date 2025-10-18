@@ -1,6 +1,7 @@
 import { CardFormDataDTO } from '../models/dto/CardFormDataDTO.js'
 import { Div, Span, Button, Element } from '../ui/index.js'
 import { CardItemComponent } from '../components/CardItemComponent.js'
+import { ClearDeckButtonComponent } from '../components/ClearDeckButtonComponent.js'
 
 export class DeckView {
   constructor() {
@@ -16,6 +17,10 @@ export class DeckView {
 
     this.cardComponents = []
     this.removeCardHandler = null
+    this.clearDeckHandler = null
+
+    this.clearDeckButton = null
+    this.#addClearButton()
   }
 
   getCardFormData() {
@@ -94,6 +99,10 @@ export class DeckView {
     }, {})
   }
 
+  #addClearButton() {
+    this.clearDeckButton = new ClearDeckButtonComponent()
+  }
+
   showSuccess(message) {
     const successDiv = new Div()
       .addClass('success-message')
@@ -124,5 +133,12 @@ export class DeckView {
 
   bindRemoveCard(handler) {
     this.removeCardHandler = handler
+  }
+
+  bindClearDeck(handler) {   
+    this.clearDeckButton.setClickHandler(handler)
+    const buttonElement = this.clearDeckButton.toDOMElement()
+    const container = this.deckListElement.parentElement
+    container.insertBefore(buttonElement, this.deckListElement)
   }
 }
