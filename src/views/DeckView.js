@@ -15,6 +15,7 @@ export class DeckView {
     this.quantityInput = document.getElementById('card-quantity')
 
     this.cardComponents = []
+    this.removeCardHandler = null
   }
 
   getCardFormData() {
@@ -58,6 +59,13 @@ export class DeckView {
 
     Object.entries(cardGroup).forEach(([name, data]) => {
       const cardComponent = new CardItemComponent(name, data)
+
+      cardComponent.setRemoveHandler((cardName) => {
+        if (this.removeCardHandler) {
+          this.removeCardHandler(cardName)
+        }
+      })
+
       const built = cardComponent.build()
       this.cardComponents.push(cardComponent)
       container.appendChild(built)
@@ -112,5 +120,9 @@ export class DeckView {
       const { cardData, quantity } = this.getCardFormData()
       handler(cardData, quantity)
     })
+  }
+
+  bindRemoveCard(handler) {
+    this.removeCardHandler = handler
   }
 }

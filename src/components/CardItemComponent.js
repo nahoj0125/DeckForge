@@ -6,7 +6,7 @@ export class CardItemComponent extends Component {
     this.name = name
     this.quantity = data.quantity
     this.card = data.card
-    this.RemoveHandler = null
+    this.removeHandler = null
   }
 
   build() {
@@ -17,7 +17,6 @@ export class CardItemComponent extends Component {
     const cardInfo = this.#buildCardInfo()
     const removeButton = this.#buildRemoveButton()
 
-    removeButton.addClass('remove-card-btn')
     cardItem.appendChild(cardInfo)
     cardItem.appendChild(removeButton)
     return cardItem
@@ -55,6 +54,20 @@ export class CardItemComponent extends Component {
   }
 
   #buildRemoveButton() {
-    return new Button('Remove').addClass('remove-card-btn')
+    return new Button('Remove')
+      .addClass('remove-card-btn')
+      .setAttribute('data-card-name', this.name)
+      .onClick(() => this.onRemove())
+  }
+
+  onRemove() {
+    if (this.removeHandler) {
+      this.removeHandler(this.name)
+    }
+  }
+
+  setRemoveHandler(handler) {
+    this.removeHandler = handler
+    return this
   }
 }

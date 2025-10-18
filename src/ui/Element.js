@@ -4,6 +4,7 @@ export class Element {
     this.children = []
     this.classes = new Set()
     this.attributes = new Map()
+    this.eventHandlers = new Map()
     this.domElement = null
   }
 
@@ -20,7 +21,7 @@ export class Element {
   appendChild(child) {
     if (child instanceof Element) {
       this.children.push(child)
-    } else if ({ text: String(child) || typeof child === 'number'}) {
+    } else if ({ text: String(child) || typeof child === 'number' }) {
       this.children.push({ text: String(child) })
     }
 
@@ -34,6 +35,14 @@ export class Element {
     }
   }
 
+  on(event, handler) {
+    if (!this.eventHandlers.has(event)) {
+      this.eventHandlers.set(event, [])
+    }
+    this.eventHandlers.get(event).push(handler)
+    return this
+  }
+
   toDOMElement() {
     const element = document.createElement(this.tag)
 
@@ -43,6 +52,14 @@ export class Element {
 
     if (this.classes.size > 0) {
       element.className = Array.from(this.classes).join(' ')
+    }
+
+    if (this.eventHandlers && this.eventHandlers.size > 0) {
+      this.eventHandlers.forEach((handlers, event) => {
+        handlers.forEach((handler) => {
+          element.addEventListener(event, handler)
+        })
+      })
     }
 
     this.children.forEach((child) => {

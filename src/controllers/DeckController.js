@@ -21,6 +21,17 @@ export class DeckController {
     }
   }
 
+    handleRemoveCard(cardName) {
+    try {
+      this.model.removeCard(cardName)
+      this.view.showSuccess(`Removed ${cardName}`)
+      this.updateUI()
+    } catch (error) {
+      console.error('Error removing card:', error)
+      this.view.showError('Failed to remove card')
+    }
+  }
+
   updateUI() {
     const cards = this.model.getCards()
     const state = this.model.getDeckState()
@@ -32,6 +43,9 @@ export class DeckController {
   bindEvents() {
     this.view.bindAddCard((cardData, quantity) => {
       this.handleAddCard(cardData, quantity)
+    })
+        this.view.bindRemoveCard((cardName) => {
+      this.handleRemoveCard(cardName)
     })
   }
 }
