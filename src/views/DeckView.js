@@ -126,8 +126,7 @@ export class DeckView {
   bindAddCard(handler) {
     this.cardForm.addEventListener('submit', (event) => {
       event.preventDefault()
-      const { cardData, quantity } = this.getCardFormData()
-      handler(cardData, quantity)
+      handler(this.getCardFormData())
     })
   }
 

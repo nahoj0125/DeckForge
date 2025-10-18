@@ -11,9 +11,9 @@ export class DeckController {
     this.updateUI()
   }
 
-  handleAddCard(cardData, quantity) {
+  handleAddCard(formData) {
     try {
-      const result = this.model.addCard(cardData, quantity)
+      const result = this.model.addCard(formData.cardData, formData.quantity)
       this.view.showSuccess(`Added ${result.quantity}x ${result.cardName}`)
       this.updateUI()
     } catch (error) {
@@ -50,8 +50,8 @@ export class DeckController {
   }
 
   bindEvents() {
-    this.view.bindAddCard((cardData, quantity) => {
-      this.handleAddCard(cardData, quantity)
+    this.view.bindAddCard((formData) => {
+      this.handleAddCard(formData)
     })
     this.view.bindRemoveCard((cardName) => {
       this.handleRemoveCard(cardName)
