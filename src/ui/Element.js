@@ -1,8 +1,9 @@
 export class Element {
-  constructor (tag) {
+  constructor(tag) {
     this.tag = tag
     this.children = []
     this.classes = new Set()
+    this.attributes = new Map()
     this.domElement = null
   }
 
@@ -10,9 +11,16 @@ export class Element {
     this.classes.add(className)
     return this
   }
- 
+
+  setAttribute(name, value) {
+    this.attributes.set(name, value)
+    return this
+  }
+
   appendChild(child) {
-    if (typeof child === 'string') {
+    if (child instanceof Element) {
+      this.children.push(child)
+    } else if ({ text: String(child) }) {
       this.children.push({ text: String(child) })
     }
 
@@ -29,12 +37,18 @@ export class Element {
   toDOMElement() {
     const element = document.createElement(this.tag)
 
+    this.attributes.forEach((value, name) => {
+      element.setAttribute(name, value)
+    })
+
     if (this.classes.size > 0) {
-      element.className = Array.from(this.classes).join('')
+      element.className = Array.from(this.classes).join(' ')
     }
 
-    this.children.forEach(child => {
-      if (child.text) {
+    this.children.forEach((child) => {
+      if (child instanceof Element) {
+        element.appendChild(child.toDOMElement())
+      } else if (child.text) {
         element.appendChild(document.createTextNode(child.text))
       }
     })

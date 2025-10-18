@@ -1,5 +1,5 @@
 import { CardFormDataDTO } from "../models/dto/CardFormDataDTO.js"
-import { Div, Element } from "../ui/index.js"
+import { Div, Span, Button, Element } from "../ui/index.js"
 
 export class DeckView {
   constructor() {
@@ -19,13 +19,15 @@ export class DeckView {
       .filter((checkbox) => checkbox.checked)
       .map((colorCheckbox) => colorCheckbox.value)
 
+      console.log('Selected colors:', selectedColors)
     const cardData = {
       name: this.cardNameInput.value.trim(),
       manaCost: this.manaCostInput.value.trim(),
       type: this.cardTypeSelect.value,
-      color: selectedColors.join(''),
+      color: selectedColors.join(' '),
       powerToughness: this.powerToughnessInput.value.trim()
     }
+    console.log('Card data being sent:', cardData)
 
     const quantity = parseInt(this.quantityInput.value) || 1
 
@@ -49,14 +51,12 @@ export class DeckView {
     }
 
     const cardGroup = this.#groupCards(cards)
+    this.deckListElement.innerHTML = ''
 
-    const cardElements = Object.entries(cardGroup)
-      .map(([name, data]) => {
-        return this.#createCardElement(name, data)
-      })
-      .join('')
-
-    this.deckListElement.innerHTML = cardElements
+    Object.entries(cardGroup).forEach(([name, data]) => {
+      const cardElement = this.#createCardElement(name, data)
+      this.deckListElement.appendChild(cardElement)
+    })
   }
 
   updateCardCount(count) {
@@ -80,17 +80,49 @@ export class DeckView {
   #createCardElement(name, data) {
     const { quantity, card } = data
 
-    return `
-    <div class="card-item" data-card-name="${name}">
-      <div class="card-info">
-        <span class="card-quantity">${quantity}</span>
-        <span class="card-name">${name}</span>
-        <span class="card-mana">${card.manaCost}</span>
-        <span class="card-type">${card.type}</span>
-      </div>
-      <button class="remove-card-btn" data-card-name="${name}">Remove</button>
-    </div>
-    `
+    const cardItem = new Div()
+      .addClass('card-item')
+      .setAttribute('data-card-name', name)
+    
+    const cardInfo = new Div().addClass('card-info')
+    
+    const quantitySpan = new Span()
+      .addClass('card-quantity')
+      .appendChild(quantity.toString())
+    
+    const nameSpan = new Span()
+      .addClass('card-name')
+      .appendChild(name)
+    
+    const manaSpan = new Span()
+      .addClass('card-mana')
+      .appendChild(card.manaCost)
+    
+    const typeSpan = new Span()
+      .addClass('card-type')
+      .appendChild(card.type)
+
+    const colorSpan = new Span()
+      .addClass('card-color')
+      .appendChild(card.color || 'colorless')
+    
+    cardInfo
+      .appendChild(quantitySpan)
+      .appendChild(nameSpan)
+      .appendChild(manaSpan)
+      .appendChild(typeSpan)
+      .appendChild(colorSpan)
+    
+    const removeButton = new Button()
+      .addClass('remove-card-btn')
+      .setAttribute('data-card-name', name)
+      .appendChild('Remove')
+    
+    cardItem
+      .appendChild(cardInfo)
+      .appendChild(removeButton)
+    
+    return cardItem.toDOMElement()
   }
 
   showSuccess(message) {
@@ -99,16 +131,16 @@ export class DeckView {
     const container = this.cardForm.parentElement
     container.insertBefore(successDiv.toDOMElement(), this.cardForm)
 
-    setTimeout(() => successDiv.remove(), 30000)
+    setTimeout(() => successDiv.remove(), 3000)
   }
 
   showError(message) {
-    const errorDiv = new Div().appendChild(message)
+    const errorDiv = new Div().addClass('error-message').appendChild(message)
 
     const container = this.cardForm.parentElement
     container.insertBefore(errorDiv.toDOMElement(), this.cardForm)
 
-    setTimeout(() => errorDiv.remove(), 3000)
+    setTimeout(() => errorDiv.remove(), 5000)
   }
 
   bindAddCard(handler) {

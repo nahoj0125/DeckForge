@@ -1,2 +1,4 @@
 export { Div } from './Div.js'
+export { Span } from './Span.js'
 export { Element } from './Element.js'
+export { Button } from './Button.js'
