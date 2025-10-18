@@ -1,5 +1,6 @@
-import { CardFormDataDTO } from "../models/dto/CardFormDataDTO.js"
-import { Div, Span, Button, Element } from "../ui/index.js"
+import { CardFormDataDTO } from '../models/dto/CardFormDataDTO.js'
+import { Div, Span, Button, Element } from '../ui/index.js'
+import { CardItemComponent } from '../components/CardItemComponent.js'
 
 export class DeckView {
   constructor() {
@@ -12,6 +13,8 @@ export class DeckView {
     this.colorCheckboxes = document.querySelectorAll('input[name="color"]')
     this.powerToughnessInput = document.getElementById('card-power')
     this.quantityInput = document.getElementById('card-quantity')
+
+    this.cardComponents = []
   }
 
   getCardFormData() {
@@ -19,15 +22,13 @@ export class DeckView {
       .filter((checkbox) => checkbox.checked)
       .map((colorCheckbox) => colorCheckbox.value)
 
-      console.log('Selected colors:', selectedColors)
     const cardData = {
       name: this.cardNameInput.value.trim(),
       manaCost: this.manaCostInput.value.trim(),
       type: this.cardTypeSelect.value,
       color: selectedColors.join(' '),
-      powerToughness: this.powerToughnessInput.value.trim()
+      powerToughness: this.powerToughnessInput.value.trim(),
     }
-    console.log('Card data being sent:', cardData)
 
     const quantity = parseInt(this.quantityInput.value) || 1
 
@@ -41,22 +42,30 @@ export class DeckView {
       checkbox.checked = false
     })
 
-    this.quantity = '1'
+    this.quantityInput.value = '1'
   }
 
   renderDeckList(cards) {
+    this.cardComponents = []
+
     if (!cards || cards.length === 0) {
-      this.deckListElement.innerHTML = '<p class="empty-message">No cards in deck</p>'
+      this.deckListElement.innerHTML =
+        '<p class="empty-message">No cards in deck</p>'
       return
     }
-
     const cardGroup = this.#groupCards(cards)
-    this.deckListElement.innerHTML = ''
+    const container = new Div().addClass('deck-list-container')
 
     Object.entries(cardGroup).forEach(([name, data]) => {
-      const cardElement = this.#createCardElement(name, data)
-      this.deckListElement.appendChild(cardElement)
+      const cardComponent = new CardItemComponent(name, data)
+      const built = cardComponent.build()
+      this.cardComponents.push(cardComponent)
+      container.appendChild(built)
     })
+    const domElement = container.toDOMElement()
+
+    this.deckListElement.innerHTML = ''
+    this.deckListElement.appendChild(domElement)
   }
 
   updateCardCount(count) {
@@ -74,59 +83,13 @@ export class DeckView {
       }
       groups[name].quantity++
       return groups
-    },{})
-  }
-
-  #createCardElement(name, data) {
-    const { quantity, card } = data
-
-    const cardItem = new Div()
-      .addClass('card-item')
-      .setAttribute('data-card-name', name)
-    
-    const cardInfo = new Div().addClass('card-info')
-    
-    const quantitySpan = new Span()
-      .addClass('card-quantity')
-      .appendChild(quantity.toString())
-    
-    const nameSpan = new Span()
-      .addClass('card-name')
-      .appendChild(name)
-    
-    const manaSpan = new Span()
-      .addClass('card-mana')
-      .appendChild(card.manaCost)
-    
-    const typeSpan = new Span()
-      .addClass('card-type')
-      .appendChild(card.type)
-
-    const colorSpan = new Span()
-      .addClass('card-color')
-      .appendChild(card.color || 'colorless')
-    
-    cardInfo
-      .appendChild(quantitySpan)
-      .appendChild(nameSpan)
-      .appendChild(manaSpan)
-      .appendChild(typeSpan)
-      .appendChild(colorSpan)
-    
-    const removeButton = new Button()
-      .addClass('remove-card-btn')
-      .setAttribute('data-card-name', name)
-      .appendChild('Remove')
-    
-    cardItem
-      .appendChild(cardInfo)
-      .appendChild(removeButton)
-    
-    return cardItem.toDOMElement()
+    }, {})
   }
 
   showSuccess(message) {
-    const successDiv = new Div().addClass('success-message').appendChild(message)
+    const successDiv = new Div()
+      .addClass('success-message')
+      .appendChild(message)
 
     const container = this.cardForm.parentElement
     container.insertBefore(successDiv.toDOMElement(), this.cardForm)
