@@ -1,4 +1,4 @@
-import { Div } from '../ui/index.js'
+import { Div, P } from '../ui/index.js'
 import { CardItemComponent } from '../components/CardItemComponent.js'
 import { ClearDeckButtonComponent } from '../components/ClearDeckButtonComponent.js'
 
@@ -17,30 +17,47 @@ export class DeckListView {
     this.cardComponents = []
 
     if (!cards || cards.length === 0) {
-      this.deckListElement.innerHTML =
-        '<p class="empty-message">No cards in deck</p>'
+      this.#renderEmptyState()
       return
     }
     const cardGroup = this.#groupCards(cards)
-    const container = new Div().addClass('deck-list-container')
+    const container = this.#buildCardListContainer(cardGroup)
 
-    Object.entries(cardGroup).forEach(([name, data]) => {
-      const cardComponent = new CardItemComponent(name, data)
-
-      cardComponent.setRemoveHandler((cardName) => {
-        if (this.removeCardHandler) {
-          this.removeCardHandler(cardName)
-        }
-      })
-
-      const built = cardComponent.build()
-      this.cardComponents.push(cardComponent)
-      container.appendChild(built)
-    })
     const domElement = container.toDOMElement()
-
     this.deckListElement.innerHTML = ''
     this.deckListElement.appendChild(domElement)
+  }
+
+  #buildCardListContainer(cardGroup) {
+    const container = new Div().addClass('deck-list-container')
+    Object.entries(cardGroup).forEach(([name, data]) => {
+      const cardComponent = this.#createCardComponent(name, data)
+      container.appendChild(cardComponent.build())
+    })
+
+    return container
+  }
+
+  #createCardComponent(name, data) {
+    const cardComponent = new CardItemComponent(name, data)
+
+    cardComponent.setRemoveHandler((cardName) => {
+      if (this.removeCardHandler) {
+        this.removeCardHandler(cardName)
+      }
+    })
+
+    this.cardComponents.push(cardComponent)
+    return cardComponent
+  }
+
+  #renderEmptyState() {
+    const emptyMessage = new P()
+      .addClass('empty-message')
+      .appendChild('No cards in deck')
+
+    this.deckListElement.innerHTML = ''
+    this.deckListElement.appendChild(emptyMessage.toDOMElement())
   }
 
   #groupCards(cards) {
