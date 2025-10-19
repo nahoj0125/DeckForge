@@ -1,143 +1,45 @@
-import { CardFormDataDTO } from '../models/dto/CardFormDataDTO.js'
-import { Div, Span, Button, Element } from '../ui/index.js'
-import { CardItemComponent } from '../components/CardItemComponent.js'
-import { ClearDeckButtonComponent } from '../components/ClearDeckButtonComponent.js'
+import { CardFormView } from './CardFormView.js'
+import { DeckListView } from './DeckListView.js'
 
 export class DeckView {
   constructor() {
-    this.deckListElement = document.getElementById('deck-list')
-    this.cardCountElement = document.getElementById('card-count')
-    this.cardForm = document.getElementById('add-card-form')
-    this.cardNameInput = document.getElementById('card-name')
-    this.manaCostInput = document.getElementById('card-mana')
-    this.cardTypeSelect = document.getElementById('card-type')
-    this.colorCheckboxes = document.querySelectorAll('input[name="color"]')
-    this.powerToughnessInput = document.getElementById('card-power')
-    this.quantityInput = document.getElementById('card-quantity')
-
-    this.cardComponents = []
-    this.removeCardHandler = null
-    this.clearDeckHandler = null
-
-    this.clearDeckButton = null
-    this.#addClearButton()
+    this.formView = new CardFormView()
+    this.deckListView = new DeckListView()
   }
 
   getCardFormData() {
-    const selectedColors = Array.from(this.colorCheckboxes)
-      .filter((checkbox) => checkbox.checked)
-      .map((colorCheckbox) => colorCheckbox.value)
-
-    const cardData = {
-      name: this.cardNameInput.value.trim(),
-      manaCost: this.manaCostInput.value.trim(),
-      type: this.cardTypeSelect.value,
-      color: selectedColors.join(' '),
-      powerToughness: this.powerToughnessInput.value.trim(),
-    }
-
-    const quantity = parseInt(this.quantityInput.value) || 1
-
-    return new CardFormDataDTO(cardData, quantity)
+    return this.formView.getFormData()
   }
 
   clearCardForm() {
-    this.cardForm.reset()
-
-    this.colorCheckboxes.forEach((checkbox) => {
-      checkbox.checked = false
-    })
-
-    this.quantityInput.value = '1'
-  }
-
-  renderDeckList(cards) {
-    this.cardComponents = []
-
-    if (!cards || cards.length === 0) {
-      this.deckListElement.innerHTML =
-        '<p class="empty-message">No cards in deck</p>'
-      return
-    }
-    const cardGroup = this.#groupCards(cards)
-    const container = new Div().addClass('deck-list-container')
-
-    Object.entries(cardGroup).forEach(([name, data]) => {
-      const cardComponent = new CardItemComponent(name, data)
-
-      cardComponent.setRemoveHandler((cardName) => {
-        if (this.removeCardHandler) {
-          this.removeCardHandler(cardName)
-        }
-      })
-
-      const built = cardComponent.build()
-      this.cardComponents.push(cardComponent)
-      container.appendChild(built)
-    })
-    const domElement = container.toDOMElement()
-
-    this.deckListElement.innerHTML = ''
-    this.deckListElement.appendChild(domElement)
-  }
-
-  updateCardCount(count) {
-    this.cardCountElement.textContent = `${count} cards`
-  }
-
-  #groupCards(cards) {
-    return cards.reduce((groups, card) => {
-      const name = card.name
-      if (!groups[name]) {
-        groups[name] = {
-          quantity: 0,
-          card: card,
-        }
-      }
-      groups[name].quantity++
-      return groups
-    }, {})
-  }
-
-  #addClearButton() {
-    this.clearDeckButton = new ClearDeckButtonComponent()
+    this.formView.clearForm()
   }
 
   showSuccess(message) {
-    const successDiv = new Div()
-      .addClass('success-message')
-      .appendChild(message)
-
-    const container = this.cardForm.parentElement
-    container.insertBefore(successDiv.toDOMElement(), this.cardForm)
-
-    setTimeout(() => successDiv.remove(), 3000)
+    this.formView.showSuccess(message)
   }
 
   showError(message) {
-    const errorDiv = new Div().addClass('error-message').appendChild(message)
-
-    const container = this.cardForm.parentElement
-    container.insertBefore(errorDiv.toDOMElement(), this.cardForm)
-
-    setTimeout(() => errorDiv.remove(), 5000)
+    this.formView.showError(message)
   }
 
   bindAddCard(handler) {
-    this.cardForm.addEventListener('submit', (event) => {
-      event.preventDefault()
-      handler(this.getCardFormData())
-    })
+    this.formView.bindSubmit(handler)
+  }
+
+  renderDeckList(cards) {
+    this.deckListView.renderDeckList(cards)
+  }
+
+  updateCardCount(count) {
+    this.deckListView.updateCardCount(count)
   }
 
   bindRemoveCard(handler) {
-    this.removeCardHandler = handler
+    this.deckListView.bindRemoveCard(handler)
   }
 
-  bindClearDeck(handler) {   
-    this.clearDeckButton.setClickHandler(handler)
-    const buttonElement = this.clearDeckButton.toDOMElement()
-    const container = this.deckListElement.parentElement
-    container.insertBefore(buttonElement, this.deckListElement)
+  bindClearDeck(handler) {
+    this.deckListView.bindClearDeck(handler)
   }
 }
