@@ -43,12 +43,17 @@ export class CardItemComponent extends Component {
       .addClass('card-color')
       .appendChild(this.card.color || 'colorless')
 
+    const powerToughnessSpan = new Span()
+      .addClass('card-power')
+      .appendChild(this.card.powerToughness)
+
     cardInfo
       .appendChild(quantitySpan)
       .appendChild(nameSpan)
       .appendChild(manaSpan)
       .appendChild(typeSpan)
       .appendChild(colorSpan)
+      .appendChild(powerToughnessSpan)
 
     return cardInfo
   }
