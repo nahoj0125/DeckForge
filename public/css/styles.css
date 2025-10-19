@@ -275,3 +275,23 @@ select option {
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
+
+.checkbox-group.error {
+  border: 1px solid #ff5252;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: rgba(255, 82, 82, 0.1);
+}
+
+#error-color {
+  display: block;
+  margin-top: 8px;
+  color: #ff5252;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+#error-color:empty {
+  display: none;
+}

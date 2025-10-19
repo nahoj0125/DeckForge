@@ -1,5 +1,6 @@
 import { CardFormDataDTO } from '../models/dto/CardFormDataDTO.js'
 import { Div } from '../ui/index.js'
+import { ColorSelectorComponent } from '../components/ColorSelectorComponent.js'
 
 export class CardFormView {
   constructor() {
@@ -10,12 +11,13 @@ export class CardFormView {
     this.colorCheckboxes = document.querySelectorAll('input[name="color"]')
     this.powerToughnessInput = document.getElementById('card-power')
     this.quantityInput = document.getElementById('card-quantity')
+
+    this.colorSelector = new ColorSelectorComponent(null, true)
+    this.#addColorSelector()
   }
 
   getCardFormData() {
-    const selectedColors = Array.from(this.colorCheckboxes)
-      .filter((checkbox) => checkbox.checked)
-      .map((colorCheckbox) => colorCheckbox.value)
+    const selectedColors = this.colorSelector.getSelectedColors()
 
     const cardData = {
       name: this.cardNameInput.value.trim(),
@@ -28,6 +30,14 @@ export class CardFormView {
     const quantity = parseInt(this.quantityInput.value) || 1
 
     return new CardFormDataDTO(cardData, quantity)
+  }
+
+  #addColorSelector() {
+    const colorContainer = document.querySelector('.color-container')
+    if (colorContainer) {
+      const component = this.colorSelector.toDOMElement()
+      colorContainer.appendChild(component)
+    }
   }
 
   clearCardForm() {
@@ -63,6 +73,10 @@ export class CardFormView {
   bindSubmit(handler) {
     this.cardForm.addEventListener('submit', (event) => {
       event.preventDefault()
+
+      if (!this.colorSelector.validate()) {
+        return
+      }
       handler(this.getCardFormData())
     })
   }

@@ -44,6 +44,9 @@ export class Element {
   }
 
   toDOMElement() {
+    if (this.domElement) {
+      return this.domElement
+    }
     const element = document.createElement(this.tag)
 
     this.attributes.forEach((value, name) => {
