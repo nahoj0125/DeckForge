@@ -21,7 +21,7 @@ export class Element {
   appendChild(child) {
     if (child instanceof Element) {
       this.children.push(child)
-    } else if ({ text: String(child) || typeof child === 'number' }) {
+    } else if (typeof child === 'string' || typeof child === 'number') {
       this.children.push({ text: String(child) })
     }
 

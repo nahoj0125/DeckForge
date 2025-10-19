@@ -32,42 +32,17 @@ export class CardFormView {
     return new CardFormDataDTO(cardData, quantity)
   }
 
-  #addColorSelector() {
-    const colorContainer = document.querySelector('.color-container')
-    if (colorContainer) {
-      const component = this.colorSelector.toDOMElement()
-      colorContainer.appendChild(component)
-    }
-  }
-
   clearCardForm() {
     this.cardForm.reset()
-
-    this.colorCheckboxes.forEach((checkbox) => {
-      checkbox.checked = false
-    })
-
     this.quantityInput.value = '1'
   }
 
   showSuccess(message) {
-    const successDiv = new Div()
-      .addClass('success-message')
-      .appendChild(message)
-
-    const container = this.cardForm.parentElement
-    container.insertBefore(successDiv.toDOMElement(), this.cardForm)
-
-    setTimeout(() => successDiv.remove(), 3000)
+    this.#showMessage(message, 'success', 3000)
   }
 
   showError(message) {
-    const errorDiv = new Div().addClass('error-message').appendChild(message)
-
-    const container = this.cardForm.parentElement
-    container.insertBefore(errorDiv.toDOMElement(), this.cardForm)
-
-    setTimeout(() => errorDiv.remove(), 5000)
+    this.#showMessage(message, 'error', 5000)
   }
 
   bindSubmit(handler) {
@@ -79,5 +54,24 @@ export class CardFormView {
       }
       handler(this.getCardFormData())
     })
+  }
+
+  #addColorSelector() {
+    const colorContainer = document.querySelector('.color-container')
+    if (colorContainer) {
+      const component = this.colorSelector.toDOMElement()
+      colorContainer.appendChild(component)
+    }
+  }
+
+  #showMessage(message, type, duration) {
+  const messageDiv = new Div()
+    .addClass(`${type}-message`)
+    .appendChild(message)
+  
+    const container = this.cardForm.parentElement
+    container.insertBefore(messageDiv.toDOMElement(), this.cardForm)
+
+    setTimeout(() => messageDiv.remove(), duration)
   }
 }
