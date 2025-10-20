@@ -1,7 +1,11 @@
 import { Div, P } from '../ui/index.js'
 import { CardItemComponent } from '../components/CardItemComponent.js'
 import { ClearDeckButtonComponent } from '../components/ClearDeckButtonComponent.js'
-
+/**
+ * Manages deck state and card operations
+ *
+ * Validates operations and enforces deck size constraints
+ */
 export class DeckListView {
   constructor() {
     this.deckListElement = document.getElementById('deck-list')
@@ -11,6 +15,11 @@ export class DeckListView {
     this.clearDeckButton = new ClearDeckButtonComponent()
   }
 
+  /**
+   * Renders the deck list or empty state
+   *
+   * @param {Array<Object>} cards - Array of card objects
+   */
   renderDeckList(cards) {
     if (this.#isEmpty(cards)) {
       this.#renderEmptyState()
@@ -20,14 +29,29 @@ export class DeckListView {
     this.#renderCards(cards)
   }
 
+  /**
+   * Updates the card count display
+   *
+   * @param {number} count - Total number of cards
+   */
   updateCardCount(count) {
     this.cardCountElement.textContent = `${count} cards`
   }
 
+  /**
+   * Binds handler for removing cards
+   *
+   * @param {Function} handler - Handler function (cardName) => void
+   */
   bindRemoveCard(handler) {
     this.removeCardHandler = handler
   }
 
+  /**
+   * Binds handler for clearing entire deck
+   *
+   * @param {Function} handler - Handler function () => void
+   */
   bindClearDeck(handler) {
     this.clearDeckButton.setClickHandler(handler)
     const buttonElement = this.clearDeckButton.toDOMElement()
@@ -57,6 +81,7 @@ export class DeckListView {
     this.deckListElement.appendChild(domElement)
   }
 
+  // Groups cards by name and counts duplicates
   #groupCards(cards) {
     return cards.reduce((groups, card) => {
       const name = card.name
@@ -81,6 +106,7 @@ export class DeckListView {
     return container
   }
 
+  // Attaches remove handler to card component
   #createCardComponent(name, data) {
     const cardComponent = new CardItemComponent(name, data)
 

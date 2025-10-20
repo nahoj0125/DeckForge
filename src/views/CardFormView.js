@@ -2,6 +2,9 @@ import { CardFormDataDTO } from '../models/dto/CardFormDataDTO.js'
 import { Div } from '../ui/index.js'
 import { ColorSelectorComponent } from '../components/ColorSelectorComponent.js'
 
+/**
+ * Manages the card form display and input
+ */
 export class CardFormView {
   constructor() {
     this.cardForm = document.getElementById('add-card-form')
@@ -16,6 +19,11 @@ export class CardFormView {
     this.#addColorSelector()
   }
 
+  /**
+   * Collects and returns form data as DTO
+   *
+   * @returns {CardFormDataDTO} Form data with card details and quantity
+   */
   getCardFormData() {
     const selectedColors = this.colorSelector.getSelectedColors()
 
@@ -32,19 +40,37 @@ export class CardFormView {
     return new CardFormDataDTO(cardData, quantity)
   }
 
+  /**
+   * Resets all form fields to defaults
+   */
   clearCardForm() {
     this.cardForm.reset()
     this.quantityInput.value = '1'
   }
 
+  /**
+   * Displays a success message
+   *
+   * @param {string} message - Success message
+   */
   showSuccess(message) {
     this.#showMessage(message, 'success', 3000)
   }
 
+  /**
+   * Displays an error message
+   *
+   * @param {string} message - Error message
+   */
   showError(message) {
     this.#showMessage(message, 'error', 5000)
   }
 
+  /**
+   * Binds form submit handler
+   *
+   * @param {Function} handler - Handler function (formData) => void
+   */
   bindSubmit(handler) {
     this.cardForm.addEventListener('submit', (event) => {
       event.preventDefault()
@@ -56,6 +82,7 @@ export class CardFormView {
     })
   }
 
+  // Injects color selector component into DOM
   #addColorSelector() {
     const colorContainer = document.querySelector('.color-container')
     if (colorContainer) {
@@ -64,11 +91,12 @@ export class CardFormView {
     }
   }
 
+  // Displays temporary message
   #showMessage(message, type, duration) {
-  const messageDiv = new Div()
-    .addClass(`${type}-message`)
-    .appendChild(message)
-  
+    const messageDiv = new Div()
+      .addClass(`${type}-message`)
+      .appendChild(message)
+
     const container = this.cardForm.parentElement
     container.insertBefore(messageDiv.toDOMElement(), this.cardForm)
 
