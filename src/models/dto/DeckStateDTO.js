@@ -1,3 +1,4 @@
+// Data transfer object for deck state information
 export class DeckStateDTO {
   constructor({ totalCards, isEmpty, isFull, remainingSlots }) {
     this.totalCards = totalCards

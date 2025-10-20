@@ -22,6 +22,15 @@ export class DeckModel {
     this.deckAdapter = deckAdapter
   }
 
+  /**
+   * Adds one or more cards to the deck
+   *
+   * @param {Object} cardData - Card data object
+   * @param {number} quantity - Number of cards to add (default: 1)
+   * @returns {AddCardResult} Result with success status and updated count
+   * @throws {CardValidationException} If quantity is invalid
+   * @throws {DeckConstraintException} If deck would exceed maximum size
+   */
   addCard(cardData, quantity = 1) {
     this.#validateQuantity(quantity)
     this.#validateDeckMaxSize(quantity)
@@ -35,6 +44,14 @@ export class DeckModel {
     )
   }
 
+  /**
+   * Removes one or more cards from the deck by name
+   *
+   * @param {string} cardName - Name of card to remove
+   * @param {number} quantity - Number of cards to remove (default: 1)
+   * @returns {RemoveCardResult} Result with success status and updated count
+   * @throws {CardValidationException} If card name or quantity is invalid
+   */
   removeCard(cardName, quantity = 1) {
     this.#validateCardName(cardName)
     this.#validateQuantity(quantity)
@@ -48,35 +65,56 @@ export class DeckModel {
     )
   }
 
+  /**
+   * Removes all cards from the deck
+   *
+   * @returns {ClearDeckResult} Result with success status and updated count
+   */
   clearDeck() {
     this.deckAdapter.clearDeck()
 
     return new ClearDeckResult(true, this.deckAdapter.getCardCount())
   }
 
+  /**
+   * Gets all cards in the deck
+   *
+   * @returns {Array<Object>} Array of card objects
+   */
   getCards() {
     return this.deckAdapter.getCards()
   }
 
+  /**
+   * Gets total card count
+   *
+   * @returns {number} Number of cards in deck
+   */
   getCardCount() {
     return this.deckAdapter.getCardCount()
   }
 
+  /**
+   * Gets current deck state information
+   *
+   * @returns {DeckStateDTO} Current deck state with counts and status
+   */
   getDeckState() {
     const cardCount = this.deckAdapter.getCardCount()
     return new DeckStateDTO({
       totalCards: cardCount,
-      isEmpty: this.isDeckEmpty(),
-      isFull: this.isDeckFull(),
+      isEmpty: this.#isDeckEmpty(),
+      isFull: this.#isDeckFull(),
       remainingSlots: this.#MAX_DECK_SIZE - cardCount,
     })
   }
 
-  isDeckFull() {
+  #isDeckFull() {
     return this.getCardCount() >= this.#MAX_DECK_SIZE
   }
 
-  isDeckEmpty() {
+
+  #isDeckEmpty() {
     return this.getCardCount() === this.#MIN_DECKSIZE
   }
 
