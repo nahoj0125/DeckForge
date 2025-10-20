@@ -21,15 +21,15 @@ export class Element {
   appendChild(child) {
     if (child instanceof Element) {
       this.children.push(child)
-    } else if (typeof child === 'string' || typeof child === 'number') {
-      this.children.push({ text: String(child) })
+    } else if (this.#isStringorNumber(child)) {
+      this.children.push(this.#createTextNode(child))
     }
 
     return this
   }
 
   remove() {
-    if (this.domElement && this.domElement.parentNode) {
+    if (this.#hasParentNode()) {
       this.domElement.parentNode.removeChild(this.domElement)
       this.domElement = null
     }
@@ -47,24 +47,52 @@ export class Element {
     if (this.domElement) {
       return this.domElement
     }
-    const element = document.createElement(this.tag)
+    this.domElement = this.#buildDomElement()
+    return this.domElement
+  }
 
+  #isStringorNumber(child) {
+    return typeof child === 'string' || typeof child === 'number'
+  }
+
+  #createTextNode(content) {
+    return { text: String(content) }
+  }
+
+  #hasParentNode() {
+    return this.domElement && this.domElement.parentNode
+  }
+
+  #buildDomElement() {
+    const element = document.createElement(this.tag)
+    this.#applyAttributes(element)
+    this.#applyClasses(element)
+    this.#appendEventHandlers(element)
+    this.#appendChildren(element)
+    return element
+  }
+
+  #applyAttributes(element) {
     this.attributes.forEach((value, name) => {
       element.setAttribute(name, value)
     })
+  }
 
+  #applyClasses(element) {
     if (this.classes.size > 0) {
       element.className = Array.from(this.classes).join(' ')
     }
+  }
 
-    if (this.eventHandlers && this.eventHandlers.size > 0) {
-      this.eventHandlers.forEach((handlers, event) => {
-        handlers.forEach((handler) => {
-          element.addEventListener(event, handler)
-        })
+  #appendEventHandlers(element) {
+    this.eventHandlers.forEach((handlers, event) => {
+      handlers.forEach((handler) => {
+        element.addEventListener(event, handler)
       })
-    }
+    })
+  }
 
+  #appendChildren(element) {
     this.children.forEach((child) => {
       if (child instanceof Element) {
         element.appendChild(child.toDOMElement())
@@ -72,7 +100,5 @@ export class Element {
         element.appendChild(document.createTextNode(child.text))
       }
     })
-    this.domElement = element
-    return element
   }
 }
