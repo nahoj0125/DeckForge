@@ -3,21 +3,21 @@ import { MtgToolKitAdapter } from '../dal/MtgToolKitAdapter.js'
 import { DeckView } from '../views/DeckView.js'
 
 export class DeckController {
-  constructor() {
-    const adapter = new MtgToolKitAdapter('Untitled Deck')
+  constructor(deckName = 'Untitled Deck') {
+    const adapter = new MtgToolKitAdapter(deckName)
     this.model = new DeckModel(adapter)
     this.view = new DeckView()
-    this.bindEvents()
-    this.updateUI()
+    this.#bindEvents()
+    this.#updateUI()
   }
 
   handleAddCard(formData) {
     try {
       const result = this.model.addCard(formData.cardData, formData.quantity)
       this.view.showSuccess(`Added ${result.quantity}x ${result.cardName}`)
-      this.updateUI()
+      this.#updateUI()
     } catch (error) {
-      this.view.showError()
+      this.#handleError(error, 'Failed to add card')
     }
   }
 
@@ -25,9 +25,9 @@ export class DeckController {
     try {
       this.model.removeCard(cardName)
       this.view.showSuccess(`Removed ${cardName}`)
-      this.updateUI()
+      this.#updateUI()
     } catch (error) {
-      this.view.showError('Failed to remove card')
+      this.#handleError(error, 'Failed to remove card')
     }
   }
 
@@ -35,13 +35,13 @@ export class DeckController {
     try {
       this.model.clearDeck()
       this.view.showSuccess('Deck cleared')
-      this.updateUI()
+      this.#updateUI()
     } catch (error) {
-      this.view.showError('Failed to clear deck')
+      this.#handleError(error, 'Failed to clear deck')
     }
   }
 
-  updateUI() {
+  #updateUI() {
     const cards = this.model.getCards()
     const state = this.model.getDeckState()
 
@@ -49,7 +49,7 @@ export class DeckController {
     this.view.updateCardCount(state.totalCards)
   }
 
-  bindEvents() {
+  #bindEvents() {
     this.view.bindAddCard((formData) => {
       this.handleAddCard(formData)
     })
@@ -59,5 +59,9 @@ export class DeckController {
     this.view.bindClearDeck(() => {
       this.handleClearDeck()
     })
+  }
+
+  #handleError(error, message){
+    this.view.showError(message)
   }
 }
