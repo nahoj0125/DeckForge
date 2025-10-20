@@ -113,25 +113,6 @@ select option {
   box-shadow: 0 6px 12px rgba(64, 236, 93, 0.205);
 }
 
-#clear-form-btn{
-  background: linear-gradient(135deg, #a12a44 0%, #a71438 100%);
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-bottom: 20px;
-}
-
-#clear-form-btn:hover {
-  background: linear-gradient(135deg, #a51449 0%, #861043 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(236, 64, 121, 0.212);
-}
-
 /* Deck List */
 #deck-list {
   margin-top: 20px;
