@@ -8,24 +8,67 @@ export class DeckListView {
     this.cardCountElement = document.getElementById('card-count')
     this.cardComponents = []
     this.removeCardHandler = null
-    this.clearDeckHandler = null
-    this.clearDeckButton = null
-    this.#addClearButton()
+    this.clearDeckButton = new ClearDeckButtonComponent()
   }
 
   renderDeckList(cards) {
-    this.cardComponents = []
-
-    if (!cards || cards.length === 0) {
+    if (this.#isEmpty(cards)) {
       this.#renderEmptyState()
       return
     }
+
+    this.#renderCards(cards)
+  }
+
+  updateCardCount(count) {
+    this.cardCountElement.textContent = `${count} cards`
+  }
+
+  bindRemoveCard(handler) {
+    this.removeCardHandler = handler
+  }
+
+  bindClearDeck(handler) {
+    this.clearDeckButton.setClickHandler(handler)
+    const buttonElement = this.clearDeckButton.toDOMElement()
+    const container = this.deckListElement.parentElement
+    container.insertBefore(buttonElement, this.deckListElement)
+  }
+
+  #isEmpty(cards) {
+    return !cards || cards.length === 0
+  }
+
+  #renderEmptyState() {
+    const emptyMessage = new P()
+      .addClass('empty-message')
+      .appendChild('No cards in deck')
+
+    this.deckListElement.innerHTML = ''
+    this.deckListElement.appendChild(emptyMessage.toDOMElement())
+  }
+
+  #renderCards(cards) {
     const cardGroup = this.#groupCards(cards)
     const container = this.#buildCardListContainer(cardGroup)
-
     const domElement = container.toDOMElement()
+
     this.deckListElement.innerHTML = ''
     this.deckListElement.appendChild(domElement)
+  }
+
+  #groupCards(cards) {
+    return cards.reduce((groups, card) => {
+      const name = card.name
+      if (!groups[name]) {
+        groups[name] = {
+          quantity: 0,
+          card: card,
+        }
+      }
+      groups[name].quantity++
+      return groups
+    }, {})
   }
 
   #buildCardListContainer(cardGroup) {
@@ -47,49 +90,6 @@ export class DeckListView {
       }
     })
 
-    this.cardComponents.push(cardComponent)
     return cardComponent
-  }
-
-  #renderEmptyState() {
-    const emptyMessage = new P()
-      .addClass('empty-message')
-      .appendChild('No cards in deck')
-
-    this.deckListElement.innerHTML = ''
-    this.deckListElement.appendChild(emptyMessage.toDOMElement())
-  }
-
-  #groupCards(cards) {
-    return cards.reduce((groups, card) => {
-      const name = card.name
-      if (!groups[name]) {
-        groups[name] = {
-          quantity: 0,
-          card: card,
-        }
-      }
-      groups[name].quantity++
-      return groups
-    }, {})
-  }
-
-  updateCardCount(count) {
-    this.cardCountElement.textContent = `${count} cards`
-  }
-
-  #addClearButton() {
-    this.clearDeckButton = new ClearDeckButtonComponent()
-  }
-
-  bindRemoveCard(handler) {
-    this.removeCardHandler = handler
-  }
-
-  bindClearDeck(handler) {
-    this.clearDeckButton.setClickHandler(handler)
-    const buttonElement = this.clearDeckButton.toDOMElement()
-    const container = this.deckListElement.parentElement
-    container.insertBefore(buttonElement, this.deckListElement)
   }
 }
