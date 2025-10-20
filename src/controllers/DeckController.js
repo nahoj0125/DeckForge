@@ -1,12 +1,7 @@
-import { DeckModel } from '../models/DeckModel.js'
-import { MtgToolKitAdapter } from '../dal/MtgToolKitAdapter.js'
-import { DeckView } from '../views/DeckView.js'
-
 export class DeckController {
-  constructor(deckName = 'Untitled Deck') {
-    const adapter = new MtgToolKitAdapter(deckName)
-    this.model = new DeckModel(adapter)
-    this.view = new DeckView()
+  constructor(model, view) {
+    this.model = model
+    this.view = view
     this.#bindEvents()
     this.#updateUI()
   }
