@@ -27,6 +27,15 @@ export class DeckModel {
       )
     }
 
+    const currentCount = this.getCardCount()
+    if (currentCount + quantity > this.#MAX_DECK_SIZE) {
+      throw new DeckConstraintException(
+        `Cannot add ${quantity} card(s). Deck has ${currentCount} cards, maximum is ${
+          this.#MAX_DECK_SIZE
+        }`
+      )
+    }
+
     for (let i = 0; i < quantity; i++) {
       this.deckAdapter.addCard(cardData)
     }

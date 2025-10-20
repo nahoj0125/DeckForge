@@ -15,6 +15,7 @@ export class DeckController {
     try {
       const result = this.model.addCard(formData.cardData, formData.quantity)
       this.view.showSuccess(`Added ${result.quantity}x ${result.cardName}`)
+      this.view.clearCardForm()
       this.#updateUI()
     } catch (error) {
       this.#handleError(error, 'Failed to add card')

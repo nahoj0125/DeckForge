@@ -12,7 +12,7 @@ export class DeckView {
   }
 
   clearCardForm() {
-    this.formView.clearForm()
+    this.formView.clearCardForm()
   }
 
   showSuccess(message) {
