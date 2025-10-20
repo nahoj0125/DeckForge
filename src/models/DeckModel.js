@@ -7,6 +7,9 @@ import { RemoveCardResult } from './dto/RemoveCardResult.js'
 import { ClearDeckResult } from './dto/ClearDeckResult.js'
 import { DeckStateDTO } from './dto/DeckStateDTO.js'
 
+/**
+ * Manages deck state and card operations
+ */
 export class DeckModel {
   #MAX_DECK_SIZE = 60
   #MIN_DECKSIZE = 0
@@ -20,25 +23,9 @@ export class DeckModel {
   }
 
   addCard(cardData, quantity = 1) {
-    if (quantity < 1 || !Number.isInteger(quantity)) {
-      throw new CardValidationException(
-        'quantity',
-        'Quantity must be a positive integer'
-      )
-    }
-
-    const currentCount = this.getCardCount()
-    if (currentCount + quantity > this.#MAX_DECK_SIZE) {
-      throw new DeckConstraintException(
-        `Cannot add ${quantity} card(s). Deck has ${currentCount} cards, maximum is ${
-          this.#MAX_DECK_SIZE
-        }`
-      )
-    }
-
-    for (let i = 0; i < quantity; i++) {
-      this.deckAdapter.addCard(cardData)
-    }
+    this.#validateQuantity(quantity)
+    this.#validateDeckMaxSize(quantity)
+    this.#addQuantityOfCards(cardData, quantity)
 
     return new AddCardResult(
       true,
@@ -48,29 +35,10 @@ export class DeckModel {
     )
   }
 
-  getCards() {
-    return this.deckAdapter.getCards()
-  }
-
-  getCardCount() {
-    return this.deckAdapter.getCardCount()
-  }
-
   removeCard(cardName, quantity = 1) {
-    if (!cardName || cardName.trim() === '') {
-      throw new CardValidationException('cardName', 'Card name cannot be empty')
-    }
-
-    if (quantity < 1 || !Number.isInteger(quantity)) {
-      throw new CardValidationException(
-        'quantity',
-        'Quantity must be a positive integer'
-      )
-    }
-
-    for (let i = 0; i < quantity; i++) {
-      this.deckAdapter.removeCard(cardName)
-    }
+    this.#validateCardName(cardName)
+    this.#validateQuantity(quantity)
+    this.#removeQuantityOfCards(cardName, quantity)
 
     return new RemoveCardResult(
       true,
@@ -84,6 +52,14 @@ export class DeckModel {
     this.deckAdapter.clearDeck()
 
     return new ClearDeckResult(true, this.deckAdapter.getCardCount())
+  }
+
+  getCards() {
+    return this.deckAdapter.getCards()
+  }
+
+  getCardCount() {
+    return this.deckAdapter.getCardCount()
   }
 
   getDeckState() {
@@ -102,5 +78,44 @@ export class DeckModel {
 
   isDeckEmpty() {
     return this.getCardCount() === this.#MIN_DECKSIZE
+  }
+
+  #validateQuantity(quantity) {
+    if (quantity < 1 || !Number.isInteger(quantity)) {
+      throw new CardValidationException(
+        'quantity',
+        'Quantity must be a positive integer'
+      )
+    }
+  }
+
+  #validateDeckMaxSize(quantity) {
+    const currentCount = this.getCardCount()
+    const newCount = currentCount + quantity
+    if (newCount > this.#MAX_DECK_SIZE) {
+      throw new DeckConstraintException(
+        `Cannot add ${quantity} card(s). Deck has ${currentCount} cards, maximum is ${
+          this.#MAX_DECK_SIZE
+        }`
+      )
+    }
+  }
+
+  #addQuantityOfCards(cardData, quantity) {
+    for (let i = 0; i < quantity; i++) {
+      this.deckAdapter.addCard(cardData)
+    }
+  }
+
+  #validateCardName(cardName) {
+    if (!cardName || cardName.trim() === '') {
+      throw new CardValidationException('cardName', 'Card name cannot be empty')
+    }
+  }
+
+  #removeQuantityOfCards(cardName, quantity) {
+    for (let i = 0; i < quantity; i++) {
+      this.deckAdapter.removeCard(cardName)
+    }
   }
 }
