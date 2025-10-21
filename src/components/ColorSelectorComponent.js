@@ -19,33 +19,43 @@ export class ColorSelectorComponent extends Component {
 
   build() {
     const container = new Div()
-
-    const group = new Div().addClass('checkbox-group')
-    this.groupElement = group
-
-    this.colors.forEach((color) => {
-      const label = new Element('label').addClass('checkbox-label')
-
-      const checkbox = new Element('input')
-        .setAttribute('type', 'checkbox')
-        .setAttribute('name', 'color')
-        .setAttribute('value', color.value)
-        .on('change', () => this.#handleChange())
-
-      const span = new Span().appendChild(color.label)
-      label.appendChild(checkbox).appendChild(span)
-      group.appendChild(label)
-
-      this.checkboxes.push(checkbox)
-    })
-
-    container.appendChild(group)
+    container.appendChild(this.#buildColorCheckboxGroup())
 
     const error = new Span().addClass('error').setAttribute('id', 'error-color')
     this.errorElement = error
     container.appendChild(error)
 
     return container
+  }
+
+  #buildColorCheckboxGroup(){
+    const group = new Div().addClass('checkbox-group')
+    this.groupElement = group
+    this.colors.forEach((color) => {
+      const checkbox = this.#createCheckboxWithLabel(color)
+      group.appendChild(checkbox)
+    })
+    return group
+  }
+
+  #createCheckboxWithLabel(color) {
+    const label = new Element('label').addClass('checkbox-label')
+    const checkbox = this.#createCheckbox(color)
+    const span = new Span().appendChild(color.label)
+    label.appendChild(checkbox).appendChild(span)
+
+    return label
+  }
+
+  #createCheckbox(color) {
+    const checkbox = new Element('input')
+      .setAttribute('type', 'checkbox')
+      .setAttribute('name', 'color')
+      .setAttribute('value', color.value)
+      .on('change', () => this.#handleChange())
+
+    this.checkboxes.push(checkbox)
+    return checkbox
   }
 
   #handleChange() {
@@ -97,7 +107,7 @@ export class ColorSelectorComponent extends Component {
 
   setSelectedColors(colors) {
     this.checkboxes.forEach((cb) => {
-      const dom = checkbox.toDOMElement()
+      const dom = cb.toDOMElement()
       dom.checked = colors.includes(dom.value)
     })
   }

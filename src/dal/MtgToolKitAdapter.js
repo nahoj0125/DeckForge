@@ -1,21 +1,21 @@
 import { Deck } from 'mtg-deck-toolkit'
-import { 
-  CardValidationException, 
+import {
+  CardValidationException,
   DeckConstraintException,
-  ExternalModuleException 
+  ExternalModuleException,
 } from './exceptions/DataExceptions.js'
 
 /**
  * Adapter for Deck operations
- * 
+ *
  *  Wraps deck management operations
  *  Translates errors to our custom exceptions
- * 
- * 
+ *
+ *
  */
 export class MtgToolKitAdapter {
   #deck
-  
+
   constructor(deckName = 'Untitled Deck') {
     try {
       this.#deck = new Deck(deckName)
@@ -23,20 +23,20 @@ export class MtgToolKitAdapter {
       throw new ExternalModuleException('create deck', error)
     }
   }
-  
+
   /**
    * Adds a card to the deck
-   * 
+   *
    * @param {Object} cardData - Card data
    * @param {string} cardData.name - Card name
    * @param {string} cardData.manaCost - Mana cost (e.g., "2R")
    * @param {string} cardData.type - Card type
    * @param {string} cardData.color - Color
    * @param {string} cardData.powerToughness - Power/Toughness for creatures
-   * 
+   *
    * @throws {CardValidationException} If card data invalid (includes fieldName)
    * @throws {DeckConstraintException} If deck full (60 cards)
-   * 
+   *
    * @example
    * adapter.addCard({
    *   name: 'Lightning Bolt',
@@ -53,10 +53,10 @@ export class MtgToolKitAdapter {
       throw this.#translateAddCardError(error)
     }
   }
-  
+
   /**
    * Removes a card by name
-   * 
+   *
    * @param {string} cardName - Name of card to remove
    * @throws {ExternalModuleException} If removal fails
    */
@@ -67,10 +67,10 @@ export class MtgToolKitAdapter {
       throw new ExternalModuleException('remove card', error)
     }
   }
-  
+
   /**
    * Clears all cards from deck
-   * 
+   *
    * @throws {ExternalModuleException} If clear fails
    */
   clearDeck() {
@@ -80,24 +80,25 @@ export class MtgToolKitAdapter {
       throw new ExternalModuleException('clear deck', error)
     }
   }
-  
+
   /**
    * Gets all cards in the deck
-   * 
+   *
    * @returns {Array<Object>} Array of card objects
    * @throws {ExternalModuleException} If retrieval fails
    */
   getCards() {
     try {
-      return this.#deck.getCards()
+      const cards = this.#deck.getCards()
+      return this.#normalizeCards(cards)
     } catch (error) {
       throw new ExternalModuleException('get cards', error)
     }
   }
-  
+
   /**
    * Gets total card count
-   * 
+   *
    * @returns {number} Number of cards in deck
    * @throws {ExternalModuleException} If retrieval fails
    */
@@ -109,17 +110,30 @@ export class MtgToolKitAdapter {
     }
   }
 
-  
+  #normalizeCards(cards) {
+    return cards.map((card) => ({
+      ...card,
+      color: this.#normalizeColor(card.color),
+    }))
+  }
+
+  #normalizeColor(color) {
+    if (Array.isArray(color)) {
+      return color.join(' ') || 'colorless'
+    }
+    return color || 'colorless'
+  }
+
   /**
    * Translates external module errors
-   * 
+   *
    * @private
    * @param {Error} error - Error from external module
    * @returns {DataAccessException} Translated error
    */
   #translateAddCardError(error) {
     const message = error.message.toLowerCase()
-    
+
     // Card name errors
     if (message.includes('card name')) {
       return new CardValidationException(
@@ -128,7 +142,7 @@ export class MtgToolKitAdapter {
         error
       )
     }
-    
+
     // Mana cost errors
     if (message.includes('mana cost') || message.includes('mana')) {
       return new CardValidationException(
@@ -137,7 +151,7 @@ export class MtgToolKitAdapter {
         error
       )
     }
-    
+
     // Type errors
     if (message.includes('type') && message.includes('invalid')) {
       return new CardValidationException(
@@ -146,7 +160,7 @@ export class MtgToolKitAdapter {
         error
       )
     }
-    
+
     // Color errors
     if (message.includes('color') && message.includes('invalid')) {
       return new CardValidationException(
@@ -155,7 +169,7 @@ export class MtgToolKitAdapter {
         error
       )
     }
-    
+
     // Power/Toughness errors
     if (message.includes('power') || message.includes('toughness')) {
       return new CardValidationException(
@@ -164,7 +178,7 @@ export class MtgToolKitAdapter {
         error
       )
     }
-    
+
     // Deck size constraint
     if (message.includes('max size') || message.includes('60')) {
       return new DeckConstraintException(
@@ -172,7 +186,7 @@ export class MtgToolKitAdapter {
         error
       )
     }
-    
+
     // Unknown error
     return new ExternalModuleException('add card', error)
   }
