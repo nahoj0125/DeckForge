@@ -4,6 +4,9 @@ A web-based deck builder for Magic: The Gathering, built with JavaScript and MVC
 
 **[Try DeckForge Live](https://deckforge.jpersson.dev)**
 
+## Vision
+Make MTG Deck building simple, visual, and accessible for all players.
+
 ## Features
 
 * **Add Cards to Your Deck**: Add MTG cards with essential details
