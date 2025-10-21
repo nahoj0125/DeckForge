@@ -1,3 +1,6 @@
+/**
+ * Controller for deck operations
+ */
 export class DeckController {
   constructor(model, view) {
     this.model = model
@@ -6,6 +9,11 @@ export class DeckController {
     this.#updateUI()
   }
 
+  /**
+   * Handles adding a card or cards to the deck
+   *
+   * @param {CardFormDataDTO} formData - Form data with card details and quantity
+   */
   handleAddCard(formData) {
     try {
       const result = this.model.addCard(formData.cardData, formData.quantity)
@@ -17,6 +25,11 @@ export class DeckController {
     }
   }
 
+  /**
+   * Handles removing card from the deck
+   *
+   * @param {string} cardName - Name of card to remove
+   */
   handleRemoveCard(cardName) {
     try {
       this.model.removeCard(cardName)
@@ -27,6 +40,9 @@ export class DeckController {
     }
   }
 
+  /**
+   * Handles clearing all cards from the deck
+   */
   handleClearDeck() {
     try {
       this.model.clearDeck()
@@ -57,7 +73,7 @@ export class DeckController {
     })
   }
 
-  #handleError(error, message){
+  #handleError(error, message) {
     this.view.showError(message)
   }
 }
